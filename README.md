@@ -38,7 +38,7 @@ And then enter your GRID password to craete the proxy.
 Clone this repo in your working area in the CMSSWxxx/src area into a folder named 'UserCode'
 
 ```
-git clone https://github.com/cms-physics-object-school/ShortExerciseMuonDTPart1.git UserCode
+git clone https://github.com/cms-physics-object-school/ShortExerciseMuonDTPart2.git UserCode
 ```
 
 ### 3. Complete the code 
