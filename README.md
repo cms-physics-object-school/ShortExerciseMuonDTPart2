@@ -23,8 +23,8 @@ Now source CMSSW, setup your working area and create a GRID proxy.
 
 ```
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-mkdir YOURWORKINGAREA_DT
-cd YOURWORKINGAREA_DT
+mkdir YOURWORKINGAREA_DTpart2
+cd YOURWORKINGAREA_DTpart2
 export SCRAM_ARCH=slc7_amd64_gcc630
 cmsrel CMSSW_9_4_12
 cd CMSSW_9_4_12/src
