@@ -62,27 +62,61 @@ MatchedSegmentTiming::analyze(const edm::Event& iEvent, const edm::EventSetup& i
   const reco::MuonCollection muonC = *(MuCollection.product());
   for(reco::MuonCollection::const_iterator imuon = muonC.begin(); imuon != muonC.end(); ++imuon){
 
+    // we need the muon to have the standalone track
+    if ((imuon->standAloneMuon().isNull()) ) continue;
+
     // fill muon ID
     isLoose = muon::isLooseMuon(*imuon);
     isTight = muon::isHighPtMuon(*imuon, recVtxs->at(0) );
 
+    // fill muon kinematics
+    pt = imuon->pt();
+    eta = imuon->eta();
+    phi = imuon->phi();
+
+    // ignore low pT muons
+    if (pt<5.0) continue;
+
+    nHitsDT=0;
+    nHitsCSC=0;
+    timeDT=0;
+    timeCSC=0;
     timeMuon=0;
-    // fill reco::Muon timing
+    
     if (imuon->isTimeValid()) timeMuon = imuon->time().timeAtIpInOut;
     
-    // we need the muon to have the standalone track
-    if ((imuon->standAloneMuon().isNull()) ) continue;
-	
-	// get DT and CSC segements attached to the muon track
+    int count=0;
     std::vector<const CSCSegment*> matchedSegmentsCSC = theMatcher_->matchCSC(*(imuon->standAloneMuon()),iEvent);
-    std::vector<const DTRecSegment4D*> matchedSegmentsDT = theMatcher_->matchDT(*(imuon->standAloneMuon()),iEvent);
+    for (std::vector<const CSCSegment*>::iterator hiti = matchedSegmentsCSC.begin(); hiti!=matchedSegmentsCSC.end();++hiti) {
+      if ( !(*hiti)->isValid()) continue; 
+      nHitsCSC+= (*hiti)->nRecHits();
+      timeCSC+= (*hiti)->time();
+      count++;
+    }
+    
+    if (count) timeCSC/=(double)count;
 
-	
-	
-	// insert analysis here
-	
-	
-	
+    count=0;
+    std::vector<const DTRecSegment4D*> matchedSegmentsDT = theMatcher_->matchDT(*(imuon->standAloneMuon()),iEvent);
+    for (std::vector<const DTRecSegment4D*>::iterator hiti = matchedSegmentsDT.begin(); hiti!=matchedSegmentsDT.end();++hiti) {
+      if ( !(*hiti)->isValid()) continue; 
+
+      // only look at DT segments with the Phi projection present
+      if (!(*hiti)->hasPhi()) continue;
+    
+      // segments at -999 have no timing measurement
+      if ((*hiti)->phiSegment()->t0()==-999) continue;
+      
+      // only take segments with 6 hits or more
+      if ((*hiti)->phiSegment()->recHits().size()<5) continue;
+
+      nHitsDT+= (*hiti)->phiSegment()->recHits().size();
+      timeDT+= (*hiti)->phiSegment()->t0();
+      count++;
+    }
+
+    if (count) timeDT/=(double)count;
+
     // fill the ntuple
     t->Fill();
   }
@@ -99,27 +133,15 @@ MatchedSegmentTiming::beginJob()
    hFile->cd();
 
    t = new TTree("Segments", "Segments");
-   
-   // Loose muon ID bit
-   t->Branch("isLoose", &isLoose, "isLoose/I");            
-
-   // Tight muon ID bit
+   t->Branch("isLoose", &isLoose, "isLoose/I");
    t->Branch("isTight", &isTight, "isTight/I");
-
-   // basic kinematical quantities for the muon
    t->Branch("pt", &pt, "pt/D");
    t->Branch("eta", &eta, "eta/D");
    t->Branch("phi", &phi, "phi/D");
-
-   // numbers of hits used to calculate timing
    t->Branch("nHitsDT", &nHitsDT, "nHitsDT/I");
    t->Branch("nHitsCSC", &nHitsCSC, "nHitsCSC/I");
-
-   // timing calculated from DT and/or CSC hits
    t->Branch("timeDT", &timeDT, "timeDT/D");
    t->Branch("timeCSC", &timeCSC, "timeCSC/D");
-
-   // timing value cancluated but the muon reco code
    t->Branch("timeMuon", &timeMuon, "timeMuon/D");
 
 }

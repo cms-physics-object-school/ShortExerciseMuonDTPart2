@@ -1,6 +1,6 @@
-# DT Short Exercise at CMS POS 2019 (Part 2 - Matching segments to muons and then accessing segment timing)
+# DT Short Exercise at CMS POS 2019 (Part 2 - Matching segments to muons and then accessing segment timing) : Full Exercise
 
-This repository contains the skeleton code for Part 2 of the DT Short Exercise at CMS POS 2019 : Matching segments to muons and then accessing segment timing.
+This repository contains the full exercise code for Part 2 of the DT Short Exercise at CMS POS 2019 : Matching segments to muons and then accessing segment timing.
 
 ## Introduction
 
@@ -23,8 +23,8 @@ Now source CMSSW, setup your working area and create a GRID proxy.
 
 ```
 source /cvmfs/cms.cern.ch/cmsset_default.sh
-mkdir YOURWORKINGAREA_DT
-cd YOURWORKINGAREA_DT
+mkdir YOURWORKINGAREA_DTpart2
+cd YOURWORKINGAREA_DTpart2
 export SCRAM_ARCH=slc7_amd64_gcc630
 cmsrel CMSSW_9_4_12
 cd CMSSW_9_4_12/src
@@ -41,11 +41,15 @@ Clone this repo in your working area in the CMSSWxxx/src area into a folder name
 git clone https://github.com/cms-physics-object-school/ShortExerciseMuonDTPart2.git UserCode
 ```
 
-### 3. Complete the code 
+### 3. Complete the code : switch to branch with full code 
 
-Now you can complete the code based on the skeleton code in this repository.
+Now you can switch to this branch with the full code named *fullexercise*
 
-The main C++ code is in the file 
+```
+git checkout origin/fullexercise
+```
+
+The codes for this exercise are : 
 
 ```
 CMSPOS/plugins/MatchedSegmentTiming.cc
@@ -61,11 +65,6 @@ The python config file can be found at
 ```
 CMSPOS/test/run_matched.py
 ```
-
-You can fill in the code appropriately.
-
-**Note (if you are completely stuck)** : A fully working version of the code can be found in the branch named [*fullexercise*](https://github.com/cms-physics-object-school/ShortExerciseMuonDTPart2/tree/fullexercise) of this repo. 
-
 
 ### 4. Compile your code
 
